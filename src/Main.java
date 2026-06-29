@@ -4,6 +4,7 @@ import model.Odontologo;
 import repository.CitaRepository;
 import repository.OdontologoRepository;
 import repository.PacienteRepository;
+import service.CitaService;
 import service.PacienteService;
 import view.CitaView;
 import view.MenuView;
@@ -26,11 +27,10 @@ public class Main {
         odontologoRepository.agregar(
                 new Odontologo(3, "Carla Ruiz", "Odontología general"));
 
-        PacienteService pacienteService = new PacienteService(pacienteRepository);    
+        PacienteService pacienteService = new PacienteService(pacienteRepository);
+        CitaService citaService = new CitaService(citaRepository, pacienteRepository, odontologoRepository)    
         PacienteController pacienteController = new PacienteController(pacienteService);
-
-        CitaController citaController = new CitaController(
-                citaRepository, pacienteRepository, odontologoRepository);
+        CitaController citaController = new CitaController(citaService);
 
         MenuView menuView = new MenuView();
         PacienteView pacienteView =
