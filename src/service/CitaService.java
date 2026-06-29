@@ -21,6 +21,10 @@ public class CitaService {
     }
 
     public String programarCita(int idCita, String dniPaciente, int idOdontologo, String fecha, String hora) {
+        if (idCita <= 0) {
+            return "el id de la cita debe ser mayor que cero";
+        }
+
         if (dniPaciente == null || dniPaciente.trim().equals("")) {
             return "el dni del paciente es obligatorio";
         }
@@ -34,13 +38,21 @@ public class CitaService {
         }
 
         Paciente paciente = pacienteRepository.buscarPorDni(dniPaciente);
+
         if (paciente == null) {
             return "no existe un paciente con ese dni";
         }
 
         Odontologo odontologo = odontologoRepository.buscarPorId(idOdontologo);
+
         if (odontologo == null) {
             return "no existe un odontologo con ese id";
+        }
+
+        boolean disponible = citaRepository.horarioDisponible(idOdontologo, fecha, hora);
+
+        if (!disponible) {
+            return "el odontolgo no esta disponible en ese horario";
         }
 
         Cita cita = new Cita(idCita, paciente, odontologo, fecha, hora);
@@ -55,8 +67,13 @@ public class CitaService {
 
     public String cancelarCita(int idCita) {
         Cita cita = citaRepository.buscarPorId(idCita);
+
+        if (cita == null) {
+            return "no se encontro la cita";
+        }
+
         cita.cancelar();
-        return "cita cancelada correctamente";
+        return "cita cancelada con exito";
     }
 
     public ArrayList<Cita> listarCitas() {
@@ -72,7 +89,7 @@ public class CitaService {
         ArrayList<Odontologo> odontologos = odontologoRepository.listar();
 
         for (Odontologo odontologo : odontologos) {
-            boolean mismaEspecialidad = odontologo.getEspecialidad().equals(especialidad);
+            boolean mismaEspecialidad = odontologo.getEspecialidad().equalsIgnoreCase(especialidad);
             boolean horarioLibre = citaRepository.horarioDisponible(odontologo.getId(), fecha, hora);
 
             if (mismaEspecialidad && horarioLibre) {
