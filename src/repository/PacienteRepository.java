@@ -1,45 +1,67 @@
 package repository;
 
 import model.Paciente;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
-public class PacienteRepository {
-    private ArrayList<Paciente> pacientes;
+public class PacienteRepository extends Repository<Paciente> {
+    private String ruta = "data/pacientes.txt";
 
     public PacienteRepository() {
-        pacientes = new ArrayList<>();
+        super();
+        cargarDesdeArchivo();
     }
 
-    public boolean agregar(Paciente paciente) {
-        if (buscarPorId(paciente.getId()) != null) {
-            return false;
-        }
-        if (buscarPorDni(paciente.getDni()) != null) {
-            return false;
-        }
-        pacientes.add(paciente);
-        return true;
+    @Override
+    public void agregar(Paciente paciente) {
+        datos.add(paciente);
+        guardarEnArchivo();
     }
 
     public Paciente buscarPorId(int id) {
-        for (Paciente paciente : pacientes) {
-            if (paciente.getId() == id) {
-                return paciente;
-            }
+        for (Paciente p : datos) {
+            if (p.getId() == id) return p;
         }
         return null;
     }
 
     public Paciente buscarPorDni(String dni) {
-        for (Paciente paciente : pacientes) {
-            if (paciente.getDni().equals(dni)) {
-                return paciente;
-            }
+        for (Paciente p : datos) {
+            if (p.getDni().equals(dni)) return p;
         }
         return null;
     }
 
-    public ArrayList<Paciente> listar() {
-        return pacientes;
+    private void guardarEnArchivo() {
+        try {            
+            PrintWriter writer = new PrintWriter(new FileWriter(ruta));
+            for (Paciente p : datos) {
+                writer.println(p.getId() + ";" + p.getNombre() + ";" + p.getDni() + ";" + p.getTelefono());
+            }
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("error al guardar pacientes: " + e.getMessage());
+        }
+    }
+
+    private void cargarDesdeArchivo() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(ruta));
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                String[] partes = linea.split(";");
+                int id = Integer.parseInt(partes[0]);
+                Paciente p = new Paciente(id, partes[1], partes[2], partes[3]);
+                datos.add(p);
+
+            }
+            reader.close();
+        } catch (Exception e) {
+            System.out.println("error al leer pacientes: " + e.getMessage());
+        }
     }
 }
