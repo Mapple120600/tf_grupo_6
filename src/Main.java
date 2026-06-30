@@ -1,11 +1,13 @@
 import controller.CitaController;
 import controller.PacienteController;
+import controller.OdontologoController;
 import model.Odontologo;
 import repository.CitaRepository;
 import repository.OdontologoRepository;
 import repository.PacienteRepository;
 import service.CitaService;
 import service.PacienteService;
+import service.OdontologoService;
 import view.CitaView;
 import view.MenuView;
 import view.PacienteView;
@@ -28,8 +30,10 @@ public class Main {
                 new Odontologo(3, "Carla Ruiz", "Odontología general"));
 
         PacienteService pacienteService = new PacienteService(pacienteRepository);
+        OdontologoService odontologoService = new OdontologoService(odontologoRepository);
         CitaService citaService = new CitaService(citaRepository, pacienteRepository, odontologoRepository);    
         PacienteController pacienteController = new PacienteController(pacienteService);
+        OdontologoController odontologoController = new OdontologoController(odontologoService);
         CitaController citaController = new CitaController(citaService);
 
         MenuView menuView = new MenuView();
