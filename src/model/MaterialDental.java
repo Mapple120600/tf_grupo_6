@@ -13,12 +13,24 @@ public class MaterialDental {
         this.unidad = unidad;
     }
 
-    public int getId() { return id; }
-    public String getNombre() { return nombre; }
-    public int getStock() { return stock; }
-    public String getUnidad() { return unidad; }
-    public void aumentarStock(int cantidad) { stock += cantidad; }
-    public void disminuirStock(int cantidad) { if (cantidad <= stock) stock -= cantidad; }
+    public int getId() { 
+        return id; 
+    }
+    public String getNombre() { 
+        return nombre; 
+    }
+    public int getStock() { 
+        return stock; 
+    }
+    public String getUnidad() { 
+        return unidad; 
+    }
+    public void aumentarStock(int cantidad) { 
+        stock += cantidad; 
+    }
+    public void disminuirStock(int cantidad) { 
+        if (cantidad <= stock) stock -= cantidad; 
+    }
 
     @Override
     public String toString() {
