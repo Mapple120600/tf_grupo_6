@@ -37,7 +37,10 @@ public class PacienteRepository extends Repository<Paciente> {
     }
 
     private void guardarEnArchivo() {
-        try {            
+        try {    
+            File carpeta = new File("data");
+            if (!carpeta.exists()) carpeta.mkdir();
+            
             PrintWriter writer = new PrintWriter(new FileWriter(ruta));
             for (Paciente p : datos) {
                 writer.println(p.getId() + ";" + p.getNombre() + ";" + p.getDni() + ";" + p.getTelefono());
@@ -49,15 +52,19 @@ public class PacienteRepository extends Repository<Paciente> {
     }
 
     private void cargarDesdeArchivo() {
+        File archivo = new File(ruta);
+        if (!archivo.exists()) return;
+
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(ruta));
+            BufferedReader reader = new BufferedReader(new FileReader(archivo));
             String linea;
             while ((linea = reader.readLine()) != null) {
                 String[] partes = linea.split(";");
-                int id = Integer.parseInt(partes[0]);
-                Paciente p = new Paciente(id, partes[1], partes[2], partes[3]);
-                datos.add(p);
-
+                if (partes.length == 4) {
+                    int id = Integer.parseInt(partes[0]);
+                    Paciente p = new Paciente(id, partes[1], partes[2], partes[3]);
+                    datos.add(p);
+                }
             }
             reader.close();
         } catch (Exception e) {
