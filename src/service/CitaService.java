@@ -3,6 +3,7 @@ package service;
 import model.Cita;
 import model.Odontologo;
 import model.Paciente;
+import observer.CitaEventManager;
 import repository.CitaRepository;
 import repository.OdontologoRepository;
 import repository.PacienteRepository;
@@ -13,30 +14,18 @@ public class CitaService {
     private CitaRepository citaRepository;
     private PacienteRepository pacienteRepository;
     private OdontologoRepository odontologoRepository;
+    private CitaEventManager eventManager;
+    private AuditoriaService auditoriaService;
 
-    public CitaService(CitaRepository citaRepository, PacienteRepository pacienteRepository, OdontologoRepository odontologoRepository) {
+    public CitaService(CitaRepository citaRepository, PacienteRepository pacienteRepository, OdontologoRepository odontologoRepository, CitaEventManager eventManager, AuditoriaService auditoriaService) {
         this.citaRepository = citaRepository;
         this.pacienteRepository = pacienteRepository;
         this.odontologoRepository = odontologoRepository;
+        this.eventManager = eventManager;
+        this.auditoriaService = auditoriaService;
     }
 
-    public String programarCita(int idCita, String dniPaciente, int idOdontologo, String fecha, String hora) {
-        if (idCita <= 0) {
-            return "el id de la cita debe ser mayor que cero";
-        }
-
-        if (dniPaciente == null || dniPaciente.trim().equals("")) {
-            return "el dni del paciente es obligatorio";
-        }
-
-        if (fecha == null || fecha.trim().equals("")) {
-            return "la fecha de la cita es obligatorio";
-        }
-
-        if (hora == null || hora.trim().equals("")) {
-            return "la hora de la cita es obligatoria";
-        }
-
+    public String programarCita(int id, String dniPaciente, int idOdontologo, String fecha, String hora) {
         Paciente paciente = pacienteRepository.buscarPorDni(dniPaciente);
 
         if (paciente == null) {
@@ -49,54 +38,32 @@ public class CitaService {
             return "no existe un odontologo con ese id";
         }
 
-        boolean disponible = citaRepository.horarioDisponible(idOdontologo, fecha, hora);
-
-        if (!disponible) {
+        if (!citaRepository.horarioDisponible(idOdontologo, fecha, hora)) {
             return "el odontolgo no esta disponible en ese horario";
         }
 
-        Cita cita = new Cita(idCita, paciente, odontologo, fecha, hora);
-        boolean registrado = citaRepository.agregar(cita);
-
-        if (registrado) {
-            return "cita programada correctamente";
-        } else {
-            return "no se pudo programar la cita";
-        }
+        Cita cita = new Cita(id, paciente, odontologo, fecha, hora);
+        citaRepository.agregar(cita);
+        auditoriaService.registrarAccion("Se programo una cita para " + paciente.getNombre());
+        eventManager.notificar(cita, "PROGRAMADA");
+        return "Cita programada correctamente";
     }
 
-    public String cancelarCita(int idCita) {
-        Cita cita = citaRepository.buscarPorId(idCita);
+    public String cancelarCita(int id) {
+        Cita cita = citaRepository.buscarPorId(id);
 
         if (cita == null) {
             return "no se encontro la cita";
         }
 
         cita.cancelar();
-        return "cita cancelada con exito";
+        citaRepository.guardarCambios();
+        auditoriaService.registrarAccion("Se cancelo la cita ID " + id);
+        eventManager.notificar(cita, "CANCELADA");
+        return "Cita cancelada";
     }
 
-    public ArrayList<Cita> listarCitas() {
-        return citaRepository.listar();
-    }
-
-    public ArrayList<Odontologo> listarOdontologos() {
-        return odontologoRepository.listar();
-    }
-
-    public ArrayList<Odontologo> buscarOdontologosDisponibles(String especialidad, String fecha, String hora) {
-        ArrayList<Odontologo> disponibles = new ArrayList<>();
-        ArrayList<Odontologo> odontologos = odontologoRepository.listar();
-
-        for (Odontologo odontologo : odontologos) {
-            boolean mismaEspecialidad = odontologo.getEspecialidad().equalsIgnoreCase(especialidad);
-            boolean horarioLibre = citaRepository.horarioDisponible(odontologo.getId(), fecha, hora);
-
-            if (mismaEspecialidad && horarioLibre) {
-                disponibles.add(odontologo);
-            }
-        }
-
-        return disponibles;
+    public ArrayList<Cita> listarCitas() { 
+        return citaRepository.listar(); 
     }
 }
