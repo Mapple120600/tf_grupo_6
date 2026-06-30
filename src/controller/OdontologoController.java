@@ -16,10 +16,6 @@ public class OdontologoController {
         return odontologoService.registrarOdontologo(id, nombre, especialidad);
     }
 
-    public Odontologo buscarPorId(int id) {
-        return odontologoService.buscarPorId(id);
-    }
-
     public ArrayList<Odontologo> listarOdontologos() {
         return odontologoService.listarOdontologos();
     }

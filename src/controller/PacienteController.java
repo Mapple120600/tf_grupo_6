@@ -16,10 +16,6 @@ public class PacienteController {
         return pacienteService.registrarPaciente(id, nombre, dni, telefono);
     }
 
-    public Paciente buscarPorDni(String dni) {
-        return pacienteService.buscarPorDni(dni);
-    }
-
     public ArrayList<Paciente> listarPacientes() {
         return pacienteService.listarPacientes();
     }
