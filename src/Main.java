@@ -28,7 +28,7 @@ public class Main {
                 new Odontologo(3, "Carla Ruiz", "Odontología general"));
 
         PacienteService pacienteService = new PacienteService(pacienteRepository);
-        CitaService citaService = new CitaService(citaRepository, pacienteRepository, odontologoRepository)    
+        CitaService citaService = new CitaService(citaRepository, pacienteRepository, odontologoRepository);    
         PacienteController pacienteController = new PacienteController(pacienteService);
         CitaController citaController = new CitaController(citaService);
 
