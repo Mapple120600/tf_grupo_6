@@ -25,9 +25,20 @@ public class OdontologoService {
             return "la especilidad del odontologo es obligatorio";
         }
 
+        Odontologo odontologoEncontrado = odontologoRepository.buscarPorId(id);
+
+        if (odontologoEncontrado != null) {
+            return "ya existe un odnotologo con ese id";
+        }
+
         Odontologo odontologo = new Odontologo(id, nombre, especialidad);
-        odontologoRepository.agregar(odontologo);
-        return "odontologo registrado con exito";
+        boolean registrado = odontologoRepository.agregar(odontologo);
+
+        if (registrado) {
+            return "odontologo registrado correctamente";
+        } else {
+            return "no se pudo registrar el odontolog";
+        }
     }
 
     public Odontologo buscarPorId(int id) {
