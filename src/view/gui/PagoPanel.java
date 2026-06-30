@@ -50,3 +50,4 @@ public class PagoPanel extends BasePanel {
         modelo.setRowCount(0);
         for (Pago p : controller.listarPagos()) modelo.addRow(new Object[]{p.getId(), p.getPaciente().getNombre(), p.getMonto(), p.getMetodo(), p.getFecha()});
     }
+}
