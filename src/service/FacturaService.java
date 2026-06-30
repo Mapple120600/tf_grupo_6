@@ -32,3 +32,4 @@ public class FacturaService {
     public ArrayList<Factura> listar() {
         return facturaRepository.listar();
     }
+}
