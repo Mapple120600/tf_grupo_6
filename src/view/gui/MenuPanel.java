@@ -7,7 +7,7 @@ import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.Font;
 
-public class MenuPanel {
+public class MenuPanel  extends JPanel{
     public MenuPanel(MainFrame frame) {
         setLayout(new GridLayout(11, 1, 6, 6));
         setBackground(new Color(220, 230, 240));
@@ -29,6 +29,7 @@ public class MenuPanel {
         JButton boton = new JButton(texto);
         boton.setFocusPainted(false);
         boton.setFont(new Font("Arial", Font.BOLD, 13));
+        boton.addActionListener(accion);
         add(boton);
     }
 }
