@@ -1,12 +1,7 @@
 package repository;
 
 import model.Paciente;
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 
 public class PacienteRepository extends Repository<Paciente> {
     private String ruta = "data/pacientes.txt";
@@ -37,17 +32,17 @@ public class PacienteRepository extends Repository<Paciente> {
     }
 
     private void guardarEnArchivo() {
-        try {    
+        try {
             File carpeta = new File("data");
             if (!carpeta.exists()) carpeta.mkdir();
-            
+
             PrintWriter writer = new PrintWriter(new FileWriter(ruta));
             for (Paciente p : datos) {
                 writer.println(p.getId() + ";" + p.getNombre() + ";" + p.getDni() + ";" + p.getTelefono());
             }
             writer.close();
         } catch (IOException e) {
-            System.out.println("error al guardar pacientes: " + e.getMessage());
+            System.out.println("Error al guardar pacientes: " + e.getMessage());
         }
     }
 
@@ -68,7 +63,7 @@ public class PacienteRepository extends Repository<Paciente> {
             }
             reader.close();
         } catch (Exception e) {
-            System.out.println("error al leer pacientes: " + e.getMessage());
+            System.out.println("Error al leer pacientes: " + e.getMessage());
         }
     }
 }
