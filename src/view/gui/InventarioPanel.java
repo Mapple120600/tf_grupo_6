@@ -1,4 +1,4 @@
-ppackage view.gui;
+package view.gui;
 
 import controller.InventarioController;
 import model.MaterialDental;
